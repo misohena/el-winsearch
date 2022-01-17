@@ -1,0 +1,100 @@
+#+TITLE: Windows Search for Emacs
+
+Access [[https://docs.microsoft.com/en-us/windows/desktop/search/windows-search][Windows Search]] from Emacs.
+
+* Install
+
+1. Put winsearch.el and adoquery.exe into your load path.
+
+   adoquery.exe is a simple ADO access wrapper. Included in this repository, but you can also build your own. (see:[[https://github.com/misohena/adoquery]])
+
+2. Put ~(require 'winsearch)~ into your init.el
+
+If you use ivy/counsel, you can use counsel-winsearch defined in winsearch-counsel.el.
+
+* Usage
+
+Type ~M-x winsearch~.
+
+The result is displayed like grep.
+
+* Query Format
+
+You can specify multiple of the following patterns:
+
+- word
+- "word word"
+- file:<name>
+- ext:<extension>
+- title:<name>
+- author:<name>
+- contents:<text>
+- size:<op><digits> ( <op> is one of < <= = > >= != )
+- date:<op><YYYY-MM-DD> ( <op> is one of < <= = > >= )
+- date:<YYYY-MM-DD>..<YYYY-MM-DD>
+- date:today
+
+* Example Queries
+
+Search from filepath or filename or contents.
+
+- hello
+- apple orange banana
+- "hello world"
+- CreateWindow
+
+From contents.
+
+- contents:hello\ world
+
+From title.
+
+- title:hello
+
+From filename or file.
+
+- filename:main.cpp
+- ~file:hello.cpp~
+
+By author.
+
+- author:misohena
+- author:Jhon\ Smith
+
+By file extension.
+
+- ext:mp3
+- ext:.mp3
+- fileext:mp3
+
+By kind.
+
+- kind:folder
+- kind:music
+- kind:picture
+- kind:video
+- kind:playlist
+- kind:program
+- kind:link
+(see: [[https://docs.microsoft.com/ja-jp/windows/desktop/properties/props-system-kind][System.Kind | Microsoft Docs]] )
+
+By size.
+
+- size:>=1000000000
+- size:<100000
+
+By date.
+
+- date:today
+- date:2018-12-20
+- date:2018-12
+- date:2018
+- date:=2018-12-20
+- date:2018-12-1..2019-1-3
+- date:2018-12..today
+- date:>=2010 date:<2011
+
+* For Ivy/Consel
+
+winsearch-counsel.el defines `consel-winsearch' command.
+
