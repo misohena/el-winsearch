@@ -29,6 +29,7 @@
 (require 'subr-x)
 (require 'cl-lib)
 (require 'compile)
+(require 'grep)
 
 (defgroup winsearch nil
   "Windows Search."
@@ -370,7 +371,6 @@ e.g.
 
 (define-compilation-mode winsearch-result-mode "WinSearch"
   ""
-  (require 'grep)
   (setq-local compilation-error-face grep-hit-face)
   (setq-local compilation-error-regexp-alist
               winsearch-result-mode-regexp-alist)
