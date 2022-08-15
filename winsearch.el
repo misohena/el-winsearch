@@ -330,15 +330,18 @@ e.g.
    "/header" "" ;; no header
    "/query" (winsearch-make-sql pattern scope)))
 
+(defun winsearch-make-command-program-args (pattern &optional scope)
+  (cons
+   ;; Program name
+   (or winsearch-adoquery-path
+       (winsearch-find-adoquery-path))
+   ;; Arguments
+   (winsearch-make-command-args pattern scope)))
+
 (defun winsearch-make-command-string (pattern &optional scope)
   (mapconcat
    #'shell-quote-argument
-   (cons
-    ;; Program name
-    (or winsearch-adoquery-path
-        (winsearch-find-adoquery-path))
-    ;; Arguments
-    (winsearch-make-command-args pattern scope))
+   (winsearch-make-command-program-args pattern scope)
    " "))
 
 (defmacro winsearch-avoid-multibyte-issue (&rest body)

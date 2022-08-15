@@ -98,3 +98,6 @@ By date.
 
 winsearch-counsel.el defines `consel-winsearch' command.
 
+* For consult.el
+
+winsearch-consult.el defines `consult-winsearch' command.
