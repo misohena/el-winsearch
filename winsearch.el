@@ -88,59 +88,56 @@
   ;; word ::= ( ESCAPESEQ | \ | [^\ WHITESPACE] )*
   ;; spaces ::= WHITESPACE*
   ;; pattern ::= spaces ((quoted | word) spaces)*
-  (cl-letf* ((pos 0)
-             (end (length pattern))
-             (state 'spaces)
-             (char-list nil)
-             (args nil)
-             ((symbol-function 'start)
-              (lambda (next-state)
-                (setq state next-state)))
-             ((symbol-function 'add)
-              (lambda (char)
-                (push char char-list)))
-             ((symbol-function 'end-token)
-              (lambda ()
-                (push (apply #'string (nreverse char-list)) args)
-                (setq char-list nil)
-                (setq state 'spaces))))
-    (while (< pos end)
-      (let ((curr-char (elt pattern pos))
-            (next-char (if (< (1+ pos) end) (elt pattern (1+ pos)))))
-        (pcase state
-          ;; Skip white spaces
-          ('spaces
-           (pcase curr-char
-             ((or ?  ?\f ?\t ?\n ?\r ?\v) (cl-incf pos 1))
-             (?\" (start 'quoted) (add curr-char) (cl-incf pos 1))
-             (_ (start 'word))))
+  (let ((pos 0)
+        (end (length pattern))
+        (state 'spaces)
+        (char-list nil)
+        (args nil))
+    (cl-flet ((start (next-state)
+                     (setq state next-state))
+              (add (char)
+                   (push char char-list))
+              (end-token ()
+                         (push (apply #'string (nreverse char-list)) args)
+                         (setq char-list nil)
+                         (setq state 'spaces)))
+      (while (< pos end)
+        (let ((curr-char (elt pattern pos))
+              (next-char (if (< (1+ pos) end) (elt pattern (1+ pos)))))
+          (pcase state
+            ;; Skip white spaces
+            ('spaces
+             (pcase curr-char
+               ((or ?  ?\f ?\t ?\n ?\r ?\v) (cl-incf pos 1))
+               (?\" (start 'quoted) (add curr-char) (cl-incf pos 1))
+               (_ (start 'word))))
 
-          ;; Quoted phrase
-          ('quoted
-           (pcase curr-char
-             (?\" (add curr-char) (cl-incf pos 1) (end-token))
-             (?\\
-              (pcase next-char
-                ((or ?\" ?  ?\f ?\t ?\n ?\r ?\v) (add next-char) (cl-incf pos 2))
-                (_ (add curr-char) (cl-incf pos 1))))
-             (_ (add curr-char) (cl-incf pos 1))))
+            ;; Quoted phrase
+            ('quoted
+             (pcase curr-char
+               (?\" (add curr-char) (cl-incf pos 1) (end-token))
+               (?\\
+                (pcase next-char
+                  ((or ?\" ?  ?\f ?\t ?\n ?\r ?\v) (add next-char) (cl-incf pos 2))
+                  (_ (add curr-char) (cl-incf pos 1))))
+               (_ (add curr-char) (cl-incf pos 1))))
 
-          ;; Word
-          ('word
-           (pcase curr-char
-             ((or ?  ?\f ?\t ?\n ?\r ?\v) (end-token))
-             (?\\
-              (pcase next-char
-                ((or ?\" ?  ?\f ?\t ?\n ?\r ?\v) (add next-char) (cl-incf pos 2))
-                (_ (add curr-char) (cl-incf pos 1))))
-             (_ (add curr-char) (cl-incf pos 1)))))))
+            ;; Word
+            ('word
+             (pcase curr-char
+               ((or ?  ?\f ?\t ?\n ?\r ?\v) (end-token))
+               (?\\
+                (pcase next-char
+                  ((or ?\" ?  ?\f ?\t ?\n ?\r ?\v) (add next-char) (cl-incf pos 2))
+                  (_ (add curr-char) (cl-incf pos 1))))
+               (_ (add curr-char) (cl-incf pos 1)))))))
 
-    ;; End Of String
-    (pcase state
-      ('quoted (add ?\") (end-token))
-      ('word (end-token)))
+      ;; End Of String
+      (pcase state
+        ('quoted (add ?\") (end-token))
+        ('word (end-token)))
 
-    (nreverse args)))
+      (nreverse args))))
 ;;TEST: (winsearch-split-pattern " aaa  bbb  ccc ") => ("aaa" "bbb" "ccc")
 ;;TEST: (winsearch-split-pattern " \"aaa bbb\" ") => ("\"aaa bbb\"")
 ;;TEST: (winsearch-split-pattern " \"aaa bbb")    => ("\"aaa bbb\"")  ;;EndOfString => "
