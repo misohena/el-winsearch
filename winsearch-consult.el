@@ -31,8 +31,10 @@
 (defun consult--winsearch-builder (input)
   "Build command line given CONFIG and INPUT."
   (unless (string-blank-p input)
-    (list :command (winsearch-make-command-program-args input)
-          :highlight (cdr (consult--default-regexp-compiler input 'basic t)))))
+    ;; (list :command (winsearch-make-command-program-args input)
+    ;;       :highlight (cdr (consult--default-regexp-compiler input 'basic t)))
+    (cons (winsearch-make-command-program-args input)
+          (cdr (consult--default-regexp-compiler input 'basic t)))))
 
 ;;;###autoload
 (defun consult-winsearch (&optional initial)
