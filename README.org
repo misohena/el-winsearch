@@ -4,9 +4,10 @@ Access [[https://docs.microsoft.com/en-us/windows/desktop/search/windows-search]
 
 * Install
 
-1. Put winsearch.el and adoquery.exe into your load path.
+1. Put winsearch.el into your load path.
 
-   adoquery.exe is a simple ADO access wrapper. Included in this repository, but you can also build your own. (see:[[https://github.com/misohena/adoquery]])
+   +adoquery.exe is a simple ADO access wrapper. Included in this repository, but you can also build your own. (see:[[https://github.com/misohena/adoquery]])+
+   (adoquery.exe is no longer needed, powershell is needed instead)
 
 2. Put ~(require 'winsearch)~ into your init.el
 

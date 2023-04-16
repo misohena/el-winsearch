@@ -320,7 +320,7 @@ e.g.
 
 ;;;; Execute
 
-(defun winsearch-make-command-args (pattern &optional scope)
+(defun winsearch-make-command-args--adoquery (pattern &optional scope)
   (list
    "/conn" "Provider=Search.CollatorDSO;Extended Properties='Application=Windows';" ;;Connection String
    ;;"/format" "%1%" ;; file\directory="%1%\\\\%2%"
@@ -329,13 +329,38 @@ e.g.
    "/header" "" ;; no header
    "/query" (winsearch-make-sql pattern scope)))
 
-(defun winsearch-make-command-program-args (pattern &optional scope)
+(defun winsearch-make-command-program-args--adoquery (pattern &optional scope)
   (cons
    ;; Program name
    (or winsearch-adoquery-path
        (winsearch-find-adoquery-path))
    ;; Arguments
-   (winsearch-make-command-args pattern scope)))
+   (winsearch-make-command-args--adoquery pattern scope)))
+
+(defun winsearch-make-command-program-args--powershell (pattern &optional scope)
+  (list
+   "powershell"
+   "-Command"
+   (concat
+    "$conn = New-Object -ComObject ADODB.Connection;"
+    "$conn.Open(\"Provider=Search.CollatorDSO;Extended Properties='Application=Windows';\");"
+    "$query = '" (replace-regexp-in-string "'" "''" (winsearch-make-sql pattern scope)) "';"
+    ;;"Write-Output \"query = $query\";"
+    "$rs = New-Object -ComObject ADODB.Recordset;"
+    "$rs.Open($query, $conn);"
+    "While(-Not $rs.EOF){"
+    "Write-Output $rs.Fields[0].Value.TrimStart('file:');"
+    "$rs.MoveNext()"
+    "};"
+    "$rs.Close();"
+    "$conn.Close();")))
+
+(defvar winsearch-use-powershell-p t)
+
+(defun winsearch-make-command-program-args (pattern &optional scope)
+  (if winsearch-use-powershell-p
+      (winsearch-make-command-program-args--powershell pattern scope)
+    (winsearch-make-command-program-args--adoquery pattern scope)))
 
 (defun winsearch-make-command-string (pattern &optional scope)
   (mapconcat
