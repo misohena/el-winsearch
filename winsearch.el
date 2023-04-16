@@ -323,7 +323,9 @@ e.g.
 (defun winsearch-make-command-args (pattern &optional scope)
   (list
    "/conn" "Provider=Search.CollatorDSO;Extended Properties='Application=Windows';" ;;Connection String
-   "/format" "%1%" ;; file\directory="%1%\\\\%2%"
+   ;;"/format" "%1%" ;; file\directory="%1%\\\\%2%"
+   ;;"/format" "%(field 0)%"
+   "/format" "%(remove_prefix 'file:' (field 0))%"
    "/header" "" ;; no header
    "/query" (winsearch-make-sql pattern scope)))
 
@@ -367,7 +369,7 @@ e.g.
     'winsearch-result-mode)))
 
 (defconst winsearch-result-mode-regexp-alist
-  `(("^file:\\(?1:\\(?:[a-zA-Z]:\\)?[^\n:]+\\)$" 1)))
+  `(("^\\(?:file:\\|\\)\\(?1:\\(?:[a-zA-Z]:\\)?[^\n:]+\\)$" 1)))
 
 (define-compilation-mode winsearch-result-mode "WinSearch"
   ""

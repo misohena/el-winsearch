@@ -41,7 +41,7 @@
   "Search with `winsearch' for files which match input given INITIAL input."
   (interactive)
   (let ((url (consult--find (concat "\n" winsearch-help-pattern-string "\n" "WinSearch: ") #'consult--winsearch-builder initial)))
-    (when (string-match "\\`file:\\([^\n]+\\)\\'" url)
+    (when (string-match "\\`\\(?:file:\\|\\)\\([^\n]+\\)\\'" url)
       (find-file (match-string-no-properties 1 url)))))
 
 (provide 'winsearch-consult)
