@@ -349,7 +349,7 @@ e.g.
     "$rs = New-Object -ComObject ADODB.Recordset;"
     "$rs.Open($query, $conn);"
     "While(-Not $rs.EOF){"
-    "Write-Output $rs.Fields[0].Value.TrimStart('file:');"
+    "Write-Output ($rs.Fields[0].Value -replace '^file:','');"
     "$rs.MoveNext()"
     "};"
     "$rs.Close();"
