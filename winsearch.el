@@ -355,7 +355,11 @@ e.g.
     "$rs.Close();"
     "$conn.Close();")))
 
-(defvar winsearch-use-powershell-p t)
+(defcustom winsearch-use-powershell-p t
+  "A non-nil value means that PowerShell will be used.
+
+If nil, adoquery.exe is required (https://github.com/misohena/adoquery)."
+  :type 'boolean :group 'winsearch)
 
 (defun winsearch-make-command-program-args (pattern &optional scope)
   (if winsearch-use-powershell-p
