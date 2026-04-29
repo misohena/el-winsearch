@@ -276,7 +276,8 @@ e.g.
     ("^kind:\\(.+\\)" (lambda (word) (format "(System.Kind = '%s')" (winsearch-escape-single-quote (match-string 1 word))))) ;;https://docs.microsoft.com/ja-jp/windows/desktop/properties/props-system-kind
     ("^author:\\(.+\\)" (lambda (word) (format "(System.Author = '%s')" (winsearch-escape-single-quote (match-string 1 word)))))
     ("^title:\\(.+\\)" (lambda (word) (format "(System.Title Like '%%%s%%')" (winsearch-escape-single-quote (winsearch-escape-like (match-string 1 word))))))
-    ("^contents:\\(.+\\)" (lambda (word) (format "FREETEXT('%s')" (winsearch-escape-single-quote (match-string 1 word)))))
+    ("^contents:\\(.+\\)" (lambda (word) (format "CONTAINS('%s')" (winsearch-escape-single-quote (match-string 1 word)))))
+    ("^freetext:\\(.+\\)" (lambda (word) (format "FREETEXT('%s')" (winsearch-escape-single-quote (match-string 1 word)))))
     ("^size:\\(<\\|<=\\|=\\|>\\|>=\\|!=\\)?\\([0-9]+\\)" (lambda (word) (format "(System.Size %s %s)" (or (match-string 1 word) "=") (match-string 2 word))))
     (,winsearch-date-query-regexp
      (lambda (word)
@@ -294,7 +295,7 @@ e.g.
           " OR "
           "(System.ItemFolderPathDisplay Like '%" (winsearch-escape-single-quote (winsearch-escape-like word)) "%')"
           " OR "
-          "FREETEXT('" (winsearch-escape-single-quote word) "')"
+          "CONTAINS('" (winsearch-escape-single-quote word) "')"
           ")")))))
 
 (defun winsearch-make-sql (pattern &optional scope)
