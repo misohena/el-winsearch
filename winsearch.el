@@ -39,6 +39,10 @@
   "Maximum number of results."
   :type 'integer :group 'winsearch)
 
+(defcustom winsearch-order-by "System.DateModified DESC"
+  "The string following ORDER BY in the query."
+  :type 'string :group 'winsearch)
+
 (defcustom winsearch-adoquery-path nil
   "Path to adoquery.exe (See https://github.com/misohena/adoquery )"
   :type 'string :group 'winsearch)
@@ -320,8 +324,12 @@ e.g.
      (format " TOP %d" winsearch-max-results)
      ;;" System.ItemFolderPathDisplay, System.FileName" ;;%1% %2% (`Display' means localized folder name!)
      " System.ItemUrl" ;;%1%
+     ;;",System.DateModified"
      " FROM SystemIndex"
-     " WHERE " where)))
+     " WHERE " where
+     (when (stringp winsearch-order-by)
+       (concat " ORDER BY " winsearch-order-by))
+     )))
 
 ;;;; Execute
 
