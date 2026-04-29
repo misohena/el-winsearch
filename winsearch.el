@@ -35,6 +35,10 @@
   "Windows Search."
   :group 'winsearch)
 
+(defcustom winsearch-max-results 300
+  "Maximum number of results."
+  :type 'integer :group 'winsearch)
+
 (defcustom winsearch-adoquery-path nil
   "Path to adoquery.exe (See https://github.com/misohena/adoquery )"
   :type 'string :group 'winsearch)
@@ -312,7 +316,7 @@ e.g.
 
     (concat
      "SELECT"
-     " TOP 100"
+     (format " TOP %d" winsearch-max-results)
      ;;" System.ItemFolderPathDisplay, System.FileName" ;;%1% %2% (`Display' means localized folder name!)
      " System.ItemUrl" ;;%1%
      " FROM SystemIndex"
