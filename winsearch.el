@@ -53,12 +53,12 @@
 
 (defun winsearch-find-adoquery-path ()
   "Find adoquery.exe."
-  (if-let ((el-path (or load-file-name
-                        (locate-library "winsearch")))
-           (el-dir (file-name-directory el-path))
-           (exe-path (expand-file-name
-                      winsearch-adoquery-filename el-dir))
-           (exists-exe-path (if (file-exists-p exe-path) exe-path)))
+  (if-let* ((el-path (or load-file-name
+                         (locate-library "winsearch")))
+            (el-dir (file-name-directory el-path))
+            (exe-path (expand-file-name
+                       winsearch-adoquery-filename el-dir))
+            (exists-exe-path (if (file-exists-p exe-path) exe-path)))
       exists-exe-path
     winsearch-adoquery-filename))
 
